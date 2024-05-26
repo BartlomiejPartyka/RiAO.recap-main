@@ -1,0 +1,17 @@
+1.
+Rekonstrukcja obrazu - proces matematyczny przekształcenia sygnału otrzymanego w wyniku akwizycji w ”dobrej” jakości obraz.
+2.
+Czynniki determinujące jakość obrazu:
+  - Rozmycie obrazu - splot obrazu z funkcją rozproszenia punktu (ang. point spread function), np. źle ustawiona
+    ostrość w urządzeniu akwizycji - out of focus, relatywny ruch kamery.
+  - Rozdzielczość obrazy - wielkość mówiąca o tym jakiej wielkości detal obiektu może zostać zobrazowany (zależy
+    głównie od konstrukcji urządzenia, nie ilości pikseli)
+  - Kontrast obrazu - duży zakres mierzonych wartości sygnału, zdjęcia słabego kontrastu to np. zdjęcia nocne
+    (mało fotonów), zdjęcia PET (pomiar sygnału niskiej energii).
+3.
+Szum - zniekształcenie obrazu o charakterze stochastycznym. Szum jako zmienną losową charakteryzuje się poprzez dystrybucję/rozkład szumu.
+Do najbardziej typowych należę:
+• Gaussowski
+• Poissonowski
+• Gaussowsko-Poissonowski
+• Specle noise
