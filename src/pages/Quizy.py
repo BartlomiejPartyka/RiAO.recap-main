@@ -1,9 +1,18 @@
 import streamlit as st
+import os
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(parent_dir, 'DataManager.py'))
 from DataManager import data_manager
 
 
 class Quizy:
     def __init__(self):
+        # if "btn" not in st.session_state:
+        #     st.session_state.btn = False
+        # self.next_round = st.button(label="Kolejna runda!",
+        #                             disabled=st.session_state.btn,
+        #                             on_click=self.new_questions)
         self.page = None
         self.correct_answers = []
         self.answers = None
@@ -13,6 +22,12 @@ class Quizy:
         self.check_list = []
         self.select_list = []
         self.data_manager = data_manager()
+        self.q_ids = []
+
+    def new_questions(self):
+        self.data_manager.get_questions.clear()
+        st.rerun()
+        self.print()
 
     def print(self):
         '''This method adds radio buttons allowing the selection of parts of the material.'''
@@ -32,35 +47,38 @@ class Quizy:
         elif self.page == 'Część 2':
             self.get_questions(2)
 
+    # @st.cache_resource
     def get_questions(self, part):
         '''This method takes a part of the material, get questions from the database and divide them by type'''
 
-        result = self.data_manager.get_questions(1)
+        # if self.get_new_questions:
+        result = self.data_manager.get_questions(part)
 
-        st.write(result)
+        # st.write(result)
 
         self.answers = list(0 for x in range(int(len(result))))
         self.cont = []
-        for index, r in enumerate(result):
-            st.write(str(r[0]+1) + ". Pytanie:")
-            self.correct_answers.append(r[4])
-            self.cont.append(st.container(border=True))
-            if r[1] == "radio":
-                self.radio_add(r, self.cont[index])
-            elif r[1] == "select":
-                self.select_add(r, self.cont[index])
-            elif r[1] == "check":
-                self.check_add(r, self.cont[index])
+        self.q_ids = []
+        with st.form("my_form"):
+            for index, r in enumerate(result):
+                st.write(str(r[0]+1) + ". Pytanie:")
+                self.q_ids.append(r[0])
+                self.correct_answers.append(r[4])
+                self.cont.append(st.container(border=True))
+                if r[1] == "radio":
+                    self.radio_add(r, self.cont[index])
+                elif r[1] == "select":
+                    self.select_add(r, self.cont[index])
+                elif r[1] == "check":
+                    self.check_add(r, self.cont[index])
 
-        st.write(self.answers)
+            submitted = st.form_submit_button("Zatwierdź")
+            if submitted:
+                if not st.session_state.disabled:
+                    st.write("halo")
+                    self.show_results()
+        st.button(label="Kolejna runda!", on_click=self.new_questions)
 
-        accept = st.button("Zatwierdź")
-        st.session_state
-        #st.session_state.disabled = True
-        if accept == True:
-            if st.session_state.disabled == False:
-                st.write("halo")
-                self.show_results()
 
     def prettify(self, answers):
         """This method accepts a string of answers from databse format and returns a list on answer Strings"""
@@ -98,8 +116,6 @@ class Quizy:
                 self.answers[int(self.answerCounter)] = 1+i
                 self.answerCounter += 1
 
-
-
     def check_add(self, q_tuple, c):
         '''This method add question with answers in case question type is check'''
         c_answers = list(x for x in range(int(q_tuple[3])))
@@ -136,20 +152,26 @@ class Quizy:
 
     def show_results(self):
         '''This method write the score on window and mark the answers as correct or wrong'''
+        # st.session_state.disabled = True
+        # self.get_new_questions = False
         st.write(" ")
         st.subheader("Wynik:")
         score = 0
+        marks = []
         for index, r in enumerate(self.cont):
             with self.cont[index]:
                 if self.answers[index] == self.correct_answers[index]:
                     st.success('Poprawna odpowiedź!', icon="✅")
                     score += 1
+                    marks.append(1)
                 else:
                     st.error('Błędna lub tylko częściowo poprawna odpowiedź', icon="🚨")
+                    marks.append(0)
         st.write(str(score) + "/" + str(len(self.cont)))
         if score == len(self.cont):
             st.balloons()
-        st.session_state.disabled = True
+        print(f"Dupa123:{self.q_ids}")
+        self.data_manager.write_attempt(self.q_ids, marks)
 
 
 quizy = Quizy()
