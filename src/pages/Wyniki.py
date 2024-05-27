@@ -1,15 +1,18 @@
 import streamlit as st
-
 import os
+import sys
 import pandas as pd
-import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(parent_dir, 'DataManager.py'))
+from DataManager import data_manager
 
 class Results:
     def __init__(self):
-        self.file_path = "src/resources/scores.csv"
+        self.file_path = "scores.csv"
         self.score_float = None
+        self.data_manager = data_manager()
 
         if 'scores' not in st.session_state:
             if os.path.exists(self.file_path):
@@ -18,8 +21,9 @@ class Results:
                 st.session_state.scores = []
 
     def load_scores(self):
+        scores = self.data_manager.show_results()
         scores_read = pd.read_csv(self.file_path)
-        return scores_read['Wyniki'].tolist()
+        return scores_read
 
     def save_scores(self):
         scores_save = pd.DataFrame(st.session_state.scores, columns=["Wyniki"])
