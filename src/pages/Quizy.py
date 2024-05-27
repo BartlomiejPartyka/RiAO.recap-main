@@ -1,4 +1,4 @@
-import streamlit as st
+-import streamlit as st
 import os
 import sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -75,7 +75,6 @@ class Quizy:
             submitted = st.form_submit_button("Zatwierdź")
             if submitted:
                 if not st.session_state.disabled:
-                    st.write("halo")
                     self.show_results()
         st.button(label="Kolejna runda!", on_click=self.new_questions)
 
@@ -170,7 +169,6 @@ class Quizy:
         st.write(str(score) + "/" + str(len(self.cont)))
         if score == len(self.cont):
             st.balloons()
-        print(f"Dupa123:{self.q_ids}")
         self.data_manager.write_attempt(self.q_ids, marks)
 
 
