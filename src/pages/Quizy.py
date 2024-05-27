@@ -170,7 +170,7 @@ class Quizy:
         st.write(str(score) + "/" + str(len(self.cont)))
         if score == len(self.cont):
             st.balloons()
-        print(f"Dupa123:{self.q_ids}")
+        self.answers = None
         self.data_manager.write_attempt(self.q_ids, marks)
 
 
