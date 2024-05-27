@@ -21,7 +21,7 @@ class Results:
                 st.session_state.scores = []
 
     def load_scores(self):
-        scores = self.data_manager.show_results()
+        # scores = self.data_manager.show_results()
         scores_read = pd.read_csv(self.file_path)
         return scores_read
 
