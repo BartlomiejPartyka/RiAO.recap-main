@@ -55,9 +55,10 @@ class Quizy:
 
         if self.page == 'Część 1':
             self.part = 1
+            self.get_questions(self.part)
         elif self.page == 'Część 2':
             self.part = 2
-        self.get_questions(self.part)
+            self.get_questions(self.part)
 
     def get_questions(self, part):
         """This method takes a part of the material, gets questions from the database and divides them by type"""
