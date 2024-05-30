@@ -95,7 +95,7 @@ class data_manager:
             cur.execute("INSERT INTO riaoUsers (Username, UserPassword) VALUES (username, pwd)")
 
     @st.cache_data(ttl=600)
-    def write_attempt(_self,q_ids, questionsMarks):
+    def write_attempt(_self, q_ids, questionsMarks):
         overall = questionsMarks[0] + questionsMarks[1] + questionsMarks[2] + questionsMarks[3] + questionsMarks[4]
         with _self.conn.cursor() as cur:
             cur.execute(f"INSERT INTO riaoAttempts (Question1, Question2, Question3, Question4, Question5, Result1, Result2, Result3, Result4, Result5, OverallResult, UserID)"
