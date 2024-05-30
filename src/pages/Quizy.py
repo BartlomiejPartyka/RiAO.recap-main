@@ -4,7 +4,7 @@ import sys
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(parent_dir, 'DataManager.py'))
-from src.DataManager import data_manager
+from DataManager import data_manager
 
 
 class Quizy:
