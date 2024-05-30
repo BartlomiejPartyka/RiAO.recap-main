@@ -24,6 +24,7 @@ class Results:
 
             last_5_results = results_df.tail(5)
 
+            st.write("Ostatnie pięć podejść:")
             if not last_5_results.empty:
                 last_5_results.reset_index(drop=True, inplace=True)
                 last_5_results.index += 1
@@ -48,6 +49,7 @@ class Results:
 
             last_5_results2 = results_df2.tail(5)
 
+            st.write("Ostatnie pięć podejść:")
             if not last_5_results2.empty:
                 last_5_results2.reset_index(drop=True, inplace=True)
                 last_5_results2.index += 1
@@ -97,8 +99,8 @@ class Results:
                 ax.axvline(last_score, color='r', linestyle='--', linewidth=2, label=f'Ostatni wynik: {last_score:.2f}%')
 
             plt.xlabel("Wynik")
-            plt.ylabel("Liczba")
-            plt.title("Wyniki z wszystkich podejść")
+            plt.ylabel("Liczba podejść z danym wynikiem")
+            plt.title("Wyniki ze wszystkich podejść")
             plt.legend()
             st.pyplot(fig)
         else:
@@ -119,8 +121,8 @@ class Results:
                 ax.axvline(last_score, color='r', linestyle='--', linewidth=2, label=f'Ostatni wynik: {last_score:.2f}%')
 
             plt.xlabel("Wynik")
-            plt.ylabel("Liczba")
-            plt.title("Wyniki z wszystkich podejść")
+            plt.ylabel("Liczba podejść z danym wynikiem")
+            plt.title("Wyniki ze wszystkich podejść")
             plt.legend()
             st.pyplot(fig)
         else:
