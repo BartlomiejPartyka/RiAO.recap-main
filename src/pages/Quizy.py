@@ -9,11 +9,6 @@ from DataManager import data_manager
 
 class Quizy:
     def __init__(self):
-        # if "btn" not in st.session_state:
-        #     st.session_state.btn = False
-        # self.next_round = st.button(label="Kolejna runda!",
-        #                             disabled=st.session_state.btn,
-        #                             on_click=self.new_questions)
         self.page = None
         self.correct_answers = []
         self.answers = None
@@ -26,9 +21,6 @@ class Quizy:
         self.q_ids = []
 
     def new_questions(self):
-        #self.data_manager.get_questions.clear()
-        #self.data_manager.clear()
-        #st.rerun()
         self.correct_answers = []
         self.answers = None
         self.answerCounter = 0
@@ -37,7 +29,6 @@ class Quizy:
         self.check_list = []
         self.select_list = []
         self.q_ids = []
-        #self.get_questions(1)
         self.data_manager.get_questions.clear()
 
     def print_quiz(self):
@@ -47,6 +38,8 @@ class Quizy:
 
         if "disabled" not in st.session_state:
             st.session_state.disabled = False
+        if "submitted" not in st.session_state:
+            st.session_state.submitted = False
 
         pages_names = ['Część 1', 'Część 2']
         self.page = st.radio(
@@ -58,14 +51,11 @@ class Quizy:
         elif self.page == 'Część 2':
             self.get_questions(2)
 
-    # @st.cache_resource
     def get_questions(self, part):
         """This method takes a part of the material, gets questions from the database and divides them by type"""
 
         # if self.get_new_questions:
         result = self.data_manager.get_questions(part)
-
-        # st.write(result)
 
         self.answers = list(0 for x in range(int(len(result))))
         self.cont = []
@@ -73,7 +63,7 @@ class Quizy:
         counter = 0
         with st.form("my_form"):
             for index, r in enumerate(result):
-                counter +=1
+                counter += 1
                 st.write(str(counter) + ". Pytanie:")
                 self.q_ids.append(r[0])
                 self.correct_answers.append(r[4])
@@ -85,18 +75,21 @@ class Quizy:
                 elif r[1] == "check":
                     self.check_add(r, self.cont[index])
 
-            submitted = st.form_submit_button("Zatwierdź")
+            submitted = st.form_submit_button("Zatwierdź", disabled=st.session_state.disabled)
             if submitted:
-                if not st.session_state.disabled:
-                    self.show_results()
-                    # kod do disabled
+                st.session_state.disabled = True
+                st.session_state.submitted = True
+                st.experimental_rerun()
+                self.show_results()
+            if st.session_state.submitted:
+                self.show_results()
         if st.button("Kolejna runda!"):
             self.new_questions()
             st.session_state.clear()
             st.rerun()
 
     def prettify(self, answers):
-        """This method accepts a string of answers from databse format and returns a list on answer Strings"""
+        """This method accepts a string of answers from database format and returns a list on answer Strings"""
         return answers.split("//")
 
     def radio_add(self, q_tuple, c):
@@ -107,7 +100,7 @@ class Quizy:
             options[o] = str(answers[o])
         r_question = c.radio(
             str(q_tuple[2]),
-            options, index=None, disabled=st.session_state.disabled, key=q_tuple[0]
+            options, index=None, key=q_tuple[0]
         )
 
         for i in range(int(q_tuple[3])):
@@ -123,7 +116,7 @@ class Quizy:
             options[o] = str(answers[o])
         s_question = c.selectbox(
             str(q_tuple[2]),
-            options, index=None, placeholder="Wybierz odpowiedź", disabled=st.session_state.disabled,
+            options, index=None, placeholder="Wybierz odpowiedź",
             key=q_tuple[0])
         # self.select_list.append(s_question)
         for i in range(int(q_tuple[3])):
@@ -141,7 +134,7 @@ class Quizy:
             options[o] = str(answers[o])
         for x in range(int(q_tuple[3])):
             key = int(f"{q_tuple[0]}{x}")
-            check = c.checkbox(options[x], disabled=st.session_state.disabled, key=key)
+            check = c.checkbox(options[x], key=key)
             if check:
                 c_answers[x] = "Checked"
             else:
@@ -166,8 +159,6 @@ class Quizy:
 
     def show_results(self):
         """This method write the score on window and mark the answers as correct or wrong"""
-        # st.session_state.disabled = True
-        # self.get_new_questions = False
         st.write(" ")
         st.subheader("Wynik:")
         score = 0
