@@ -62,7 +62,7 @@ class data_manager:
     def show_results(_self, part):
         """Returns a dataframe with results"""
         with _self.conn.cursor() as cur:
-            cur.execute(f"SELECT TOP 5 * FROM riaoAttempts{part} ORDER BY OverallResult DESC")
+            cur.execute(f"SELECT TOP * FROM riaoAttempts{part}")
             columns = [column[0] for column in cur.description]
             data = cur.fetchall()
             df = pd.DataFrame.from_records(data, columns=columns)
