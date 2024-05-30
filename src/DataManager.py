@@ -10,7 +10,7 @@ class data_manager:
         _self.connection_string = """
         Driver={ODBC Driver 17 for SQL Server};
         Server=""" + st.secrets["db_server"] + """;
-        Database=RiAO.recap;
+        Database=RiAO.recap_fix;
         Uid=""" + st.secrets["db_uid"] + """;
         Pwd=""" + st.secrets["db_pwd"] + """;
         Encrypt=yes;
