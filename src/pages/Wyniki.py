@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from src.DataManager import data_manager
 
+
 class Results:
     def __init__(self):
         self.db_manager = data_manager()
@@ -14,25 +15,36 @@ class Results:
         st.title("Wyniki")
         st.subheader("Część 1 materiału")
 
+        # Fetch latest results from the database
         results_df = self.db_manager.show_results()
+
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
 
             # Display top 10 scores
-            top_scores_df = self.get_top_scores(results_df, n=10)
+            # top_scores_df = self.get_top_scores(results_df, n=10)
+            #
+            # if not top_scores_df.empty:
+            #     top_scores_df.index = top_scores_df.index + 1
+            #     st.table(top_scores_df[['UserID', 'Percentage']])
+            # else:
+            #     st.write("Brak najlepszych wyników do wyświetlenia.")
 
-            if not top_scores_df.empty:
-                st.table(top_scores_df[['UserID', 'Percentage']])
+            last_10_results = results_df.tail(10)
+
+            if not last_10_results.empty:
+                st.table(last_10_results[['UserID', 'Percentage']])
             else:
-                st.write("Brak najlepszych wyników do wyświetlenia.")
+                st.write("Brak wyników do wyświetlenia.")
 
-            if st.button("Wyczyść wyniki"):
-                # self.clear_overall_results()
-                st.success("Wyniki zostały wyczyszczone.")
+            # if st.button("Wyczyść wyniki"):
+            #     # self.clear_overall_results()
+            #     st.success("Wyniki zostały wyczyszczone.")
         else:
             st.write("Brak wyników w bazie danych.")
 
         self.display_session_results()
+
     def display_session_results(self):
         if 'results' in st.session_state and st.session_state['results']:
             st.subheader("Wyniki z bieżącej sesji")
