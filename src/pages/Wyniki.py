@@ -22,12 +22,13 @@ class Results:
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
 
-            last_10_results = results_df.tail(10)
+            last_5_results = results_df.tail(5)
 
-            if not last_10_results.empty:
-                last_10_results.reset_index(drop=True, inplace=True)
-                last_10_results.index += 1
-                st.table(last_10_results[['UserID', 'Percentage']])
+            if not last_5_results.empty:
+                last_5_results.reset_index(drop=True, inplace=True)
+                last_5_results.index += 1
+                last_5_results.rename(columns={'Percentage': 'Wynik procentowy'}, inplace=True)
+                st.table(last_5_results[['Wynik procentowy']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
 
@@ -45,12 +46,13 @@ class Results:
         if not results_df2.empty:
             results_df2 = self.calculate_percentage(results_df2)
 
-            last_10_results2 = results_df2.tail(10)
+            last_5_results2 = results_df2.tail(5)
 
-            if not last_10_results2.empty:
-                last_10_results2.reset_index(drop=True, inplace=True)
-                last_10_results2.index += 1
-                st.table(last_10_results2[['UserID', 'Percentage']])
+            if not last_5_results2.empty:
+                last_5_results2.reset_index(drop=True, inplace=True)
+                last_5_results2.index += 1
+                last_5_results2.rename(columns={'Percentage': 'Wynik procentowy'}, inplace=True)
+                st.table(last_5_results2[['Wynik procentowy']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
 
@@ -85,12 +87,19 @@ class Results:
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
             scores = results_df['Percentage'].tolist()
+            last_score = scores[-1] if scores else None
+
             sns.set(style="whitegrid")
             fig, ax = plt.subplots(figsize=(8, 6))
             sns.histplot(scores, bins=10, kde=True, ax=ax)
+
+            if last_score is not None:
+                ax.axvline(last_score, color='r', linestyle='--', linewidth=2, label=f'Ostatni wynik: {last_score:.2f}%')
+
             plt.xlabel("Wynik")
             plt.ylabel("Liczba")
             plt.title("Wyniki z wszystkich podejść")
+            plt.legend()
             st.pyplot(fig)
         else:
             st.write("Brak wyników do wyświetlenia.")
@@ -100,21 +109,22 @@ class Results:
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
             scores = results_df['Percentage'].tolist()
+            last_score = scores[-1] if scores else None
+
             sns.set(style="whitegrid")
             fig, ax = plt.subplots(figsize=(8, 6))
             sns.histplot(scores, bins=10, kde=True, ax=ax)
+
+            if last_score is not None:
+                ax.axvline(last_score, color='r', linestyle='--', linewidth=2, label=f'Ostatni wynik: {last_score:.2f}%')
+
             plt.xlabel("Wynik")
             plt.ylabel("Liczba")
             plt.title("Wyniki z wszystkich podejść")
+            plt.legend()
             st.pyplot(fig)
         else:
             st.write("Brak wyników do wyświetlenia.")
-
-    # def clear_overall_results(self):
-    #     # Perform database operation to clear overall_result data
-    #     with self.db_manager.conn.cursor() as cur:
-    #         cur.execute("DELETE FROM riaoAttempts")
-    #         self.db_manager.conn.commit()
 
 results = Results()
 results.print_summary()
