@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
-from DataManager import data_manager
+from src.DataManager import data_manager
 
 
 class Results:
@@ -57,9 +57,8 @@ class Results:
                 st.table(last_5_results2[['Wynik procentowy']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
-
             self.display_session_results()
-            self.print_histogram2()  # Moved this line here
+            self.print_histogram2()
         else:
             st.write("Brak wyników w bazie danych.")
 
