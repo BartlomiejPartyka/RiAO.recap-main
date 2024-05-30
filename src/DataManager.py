@@ -58,7 +58,7 @@ class data_manager:
                 row = cur.fetchone()
                 return row[0]
 
-    @st.cache_data(ttl=600)
+    @st.cache_data(ttl=0)
     def show_results(_self, part):
         """Returns a dataframe with results"""
         with _self.conn.cursor() as cur:
