@@ -12,38 +12,52 @@ class Results:
         self.results_placeholder = st.empty()
 
     def print_summary(self):
+        self.db_manager.init_connection()
+
         st.title("Wyniki")
         st.subheader("Część 1 materiału")
 
-        # Fetch latest results from the database
-        results_df = self.db_manager.show_results()
+        results_df = self.db_manager.show_results(1)
 
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
 
-            # Display top 10 scores
-            # top_scores_df = self.get_top_scores(results_df, n=10)
-            #
-            # if not top_scores_df.empty:
-            #     top_scores_df.index = top_scores_df.index + 1
-            #     st.table(top_scores_df[['UserID', 'Percentage']])
-            # else:
-            #     st.write("Brak najlepszych wyników do wyświetlenia.")
-
             last_10_results = results_df.tail(10)
 
             if not last_10_results.empty:
+                last_10_results.reset_index(drop=True, inplace=True)
+                last_10_results.index += 1
                 st.table(last_10_results[['UserID', 'Percentage']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
 
-            # if st.button("Wyczyść wyniki"):
-            #     # self.clear_overall_results()
-            #     st.success("Wyniki zostały wyczyszczone.")
+            self.display_session_results()
+            self.print_histogram1()
         else:
             st.write("Brak wyników w bazie danych.")
 
-        self.display_session_results()
+        st.title("Wyniki")
+        st.subheader("Część 2 materiału")
+
+        # Fetch latest results from the second database table
+        results_df2 = self.db_manager.show_results(2)
+
+        if not results_df2.empty:
+            results_df2 = self.calculate_percentage(results_df2)
+
+            last_10_results2 = results_df2.tail(10)
+
+            if not last_10_results2.empty:
+                last_10_results2.reset_index(drop=True, inplace=True)
+                last_10_results2.index += 1
+                st.table(last_10_results2[['UserID', 'Percentage']])
+            else:
+                st.write("Brak wyników do wyświetlenia.")
+
+            self.display_session_results()
+            self.print_histogram2()  # Moved this line here
+        else:
+            st.write("Brak wyników w bazie danych.")
 
     def display_session_results(self):
         if 'results' in st.session_state and st.session_state['results']:
@@ -66,8 +80,23 @@ class Results:
         else:
             return pd.DataFrame()
 
-    def print_histogram(self):
-        results_df = self.db_manager.show_results()
+    def print_histogram1(self):
+        results_df = self.db_manager.show_results(1)
+        if not results_df.empty:
+            results_df = self.calculate_percentage(results_df)
+            scores = results_df['Percentage'].tolist()
+            sns.set(style="whitegrid")
+            fig, ax = plt.subplots(figsize=(8, 6))
+            sns.histplot(scores, bins=10, kde=True, ax=ax)
+            plt.xlabel("Wynik")
+            plt.ylabel("Liczba")
+            plt.title("Wyniki z wszystkich podejść")
+            st.pyplot(fig)
+        else:
+            st.write("Brak wyników do wyświetlenia.")
+
+    def print_histogram2(self):
+        results_df = self.db_manager.show_results(2)
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
             scores = results_df['Percentage'].tolist()
@@ -89,4 +118,3 @@ class Results:
 
 results = Results()
 results.print_summary()
-results.print_histogram()

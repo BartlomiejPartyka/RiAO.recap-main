@@ -19,6 +19,7 @@ class Quizy:
         self.select_list = []
         self.data_manager = data_manager()
         self.q_ids = []
+        self.part = 0
 
         if 'results' not in st.session_state:
             st.session_state['results'] = []
@@ -53,9 +54,11 @@ class Quizy:
             options=pages_names, index=None)
 
         if self.page == 'Część 1':
-            self.get_questions(1)
+            self.part = 1
+            self.get_questions(self.part)
         elif self.page == 'Część 2':
-            self.get_questions(2)
+            self.part = 2
+            self.get_questions(self.part)
 
     def get_questions(self, part):
         """This method takes a part of the material, gets questions from the database and divides them by type"""
@@ -181,7 +184,7 @@ class Quizy:
         st.write(str(score) + "/" + str(len(self.cont)))
         if score == len(self.cont):
             st.balloons()
-        self.data_manager.write_attempt(self.q_ids, marks)
+        self.data_manager.write_attempt(self.q_ids, marks, self.part)
 
         st.session_state['results'].append({
             'score': score,
