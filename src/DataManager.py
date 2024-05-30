@@ -61,9 +61,9 @@ class data_manager:
                 return row[0]
 
     @st.cache_data(ttl=600)
-    def show_results(_self):
+    def show_results(_self, part):
         with _self.conn.cursor() as cur:
-            cur.execute("SELECT * FROM riaoAttempts")
+            cur.execute(f"SELECT TOP 5 * FROM riaoAttempts{part} ORDER BY OverallResult DESC")
             columns = [column[0] for column in cur.description]
             data = cur.fetchall()
             df = pd.DataFrame.from_records(data, columns=columns)
@@ -95,9 +95,12 @@ class data_manager:
             cur.execute("INSERT INTO riaoUsers (Username, UserPassword) VALUES (username, pwd)")
 
     @st.cache_data(ttl=600)
-    def write_attempt(_self, q_ids, questionsMarks):
+    def write_attempt(_self, q_ids, questionsMarks, part):
         overall = questionsMarks[0] + questionsMarks[1] + questionsMarks[2] + questionsMarks[3] + questionsMarks[4]
         with _self.conn.cursor() as cur:
-            cur.execute(f"INSERT INTO riaoAttempts (Question1, Question2, Question3, Question4, Question5, Result1, Result2, Result3, Result4, Result5, OverallResult, UserID)"
-                        f"VALUES ({q_ids[0]}, {q_ids[1]}, {q_ids[2]}, {q_ids[3]}, {q_ids[4]}, {questionsMarks[0]}, {questionsMarks[1]}, {questionsMarks[2]}, {questionsMarks[3]}, {questionsMarks[4]}, {overall}, 1)")
-    # _self.temp = run_query("SELECT * from riaoQuestionsList;")
+            cur.execute(f"INSERT INTO riaoAttempts{part} (Question1, Question2, Question3, Question4, Question5, "
+                        f"Result1, Result2, Result3, Result4, Result5, OverallResult, UserID)"
+                        f"VALUES ({q_ids[0]}, {q_ids[1]}, {q_ids[2]}, {q_ids[3]}, {q_ids[4]}, {questionsMarks[0]}, "
+                        f"{questionsMarks[1]}, {questionsMarks[2]}, {questionsMarks[3]}, {questionsMarks[4]}, {overall},"
+                        f" 1)")
+        # _self.temp = run_query("SELECT * from riaoQuestionsList;")
