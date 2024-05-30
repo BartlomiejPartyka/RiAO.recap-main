@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
-from src.DataManager import data_manager
+from DataManager import data_manager
 
 
 class Results:
