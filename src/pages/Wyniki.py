@@ -27,7 +27,8 @@ class Results:
             if not last_10_results.empty:
                 last_10_results.reset_index(drop=True, inplace=True)
                 last_10_results.index += 1
-                st.table(last_10_results[['UserID', 'Percentage']])
+                last_10_results.rename(columns={'Percentage': 'Wynik procentowy'}, inplace=True)
+                st.table(last_10_results[['Wynik procentowy']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
 
@@ -50,7 +51,8 @@ class Results:
             if not last_10_results2.empty:
                 last_10_results2.reset_index(drop=True, inplace=True)
                 last_10_results2.index += 1
-                st.table(last_10_results2[['UserID', 'Percentage']])
+                last_10_results2.rename(columns={'Percentage': 'Wynik procentowy'}, inplace=True)
+                st.table(last_10_results2[['Wynik procentowy']])
             else:
                 st.write("Brak wyników do wyświetlenia.")
 
