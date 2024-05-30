@@ -22,24 +22,21 @@ class data_manager:
         _self.temp = None
         _self.IDS = []
 
-    # Initialize connection.
-    # Uses st.cache_resource to only run once.
-
     @st.cache_resource
     def init_connection(_self):
+        """Connects to the database"""
         return pyodbc.connect(_self.connection_string)
 
-
-    # Perform query.
-    # Uses st.cache_data to only rerun when the query changes or after 10 min.
     @st.cache_data(ttl=600)
     def run_query(_self, query):
+        """Executes SQL Server query passed as a parameter"""
         with self.conn.cursor() as cur:
             cur.execute(query)
             return cur.fetchall()
 
     @st.cache_data(ttl=600)
     def register_user(_self, username, pwd):
+        """Saves user's ID, login and password into the database"""
         with _self.conn.cursor() as cur:
             temp = _self.get_highest_ID('user')
             cur.execute("INSERT INTO riaoUsers (Username, UserPassword) VALUES (username, pwd)")
@@ -50,6 +47,7 @@ class data_manager:
 
     @st.cache_data(ttl=600)
     def get_highest_ID(_self, item, **kwargs):
+        """Returns highest user or question ID"""
         with _self.conn.cursor() as cur:
             if item.lower() == 'user':
                 cur.execute("SELECT MAX(UserID) FROM riaoUsers")
@@ -62,6 +60,7 @@ class data_manager:
 
     @st.cache_data(ttl=0)
     def show_results(_self, part):
+        """Returns a dataframe with results"""
         with _self.conn.cursor() as cur:
             cur.execute(f"SELECT TOP 5 * FROM riaoAttempts{part} ORDER BY OverallResult DESC")
             columns = [column[0] for column in cur.description]
@@ -71,15 +70,15 @@ class data_manager:
             return df
 
     @st.cache_data(ttl=600)
-    def show_overall(_self):
+    def show_overall(_self, part):
+        """Returns the best score in either part"""
         with _self.conn.cursor() as cur:
-            cur.execute("SELECT TOP 1 * FROM riaoAttempts ORDER BY ResultID ASC")
-            cur.execute("SELECT * FROM riaoAttempts")
+            cur.execute(f"SELECT TOP 1 * FROM riaoAttempts{part} ORDER BY ResultID ASC")
             return cur.fetchall()
 
     @st.cache_resource(ttl=60)
     def get_questions(_self, part):
-        """Zwraca listę 5 tupli sformatowanych tak jak ostatnio trzeba było"""
+        """Returns 5 question tuples in a format compatible with Quizy methods"""
         _max_value = _self.get_highest_ID('question', part=part)
         ids = sample(range(1, _max_value), 5)
         _self.IDS = ids
@@ -90,12 +89,8 @@ class data_manager:
         return _self.questions
 
     @st.cache_data(ttl=600)
-    def write_user(_self, username, pwd):
-        with _self.conn.cursor() as cur:
-            cur.execute("INSERT INTO riaoUsers (Username, UserPassword) VALUES (username, pwd)")
-
-    @st.cache_data(ttl=600)
     def write_attempt(_self, q_ids, questionsMarks, part):
+        """Saves user's attempt into the database"""
         overall = questionsMarks[0] + questionsMarks[1] + questionsMarks[2] + questionsMarks[3] + questionsMarks[4]
         with _self.conn.cursor() as cur:
             cur.execute(f"INSERT INTO riaoAttempts{part} (Question1, Question2, Question3, Question4, Question5, "
