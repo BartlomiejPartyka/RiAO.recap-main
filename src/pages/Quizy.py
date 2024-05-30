@@ -37,6 +37,7 @@ class Quizy:
         self.select_list = []
         self.q_ids = []
         self.data_manager.get_questions.clear()
+        self.data_manager.write_attempt.clear()
 
     def print_quiz(self):
         """This method adds radio buttons allowing the selection of parts of the material."""
@@ -56,9 +57,15 @@ class Quizy:
         if self.page == 'Część 1':
             self.part = 1
             self.get_questions(self.part)
+            if st.session_state.submitted:
+                self.new_questions()
+                st.session_state.clear()
         elif self.page == 'Część 2':
             self.part = 2
             self.get_questions(self.part)
+            if st.session_state.submitted:
+                self.new_questions()
+                st.session_state.clear()
 
     def get_questions(self, part):
         """This method takes a part of the material, gets questions from the database and divides them by type"""

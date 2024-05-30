@@ -88,7 +88,7 @@ class data_manager:
                 _self.questions.append(cur.fetchone())
         return _self.questions
 
-    @st.cache_data(ttl=600)
+    @st.cache_data(ttl=2)
     def write_attempt(_self, q_ids, questionsMarks, part):
         """Saves user's attempt into the database"""
         overall = questionsMarks[0] + questionsMarks[1] + questionsMarks[2] + questionsMarks[3] + questionsMarks[4]
