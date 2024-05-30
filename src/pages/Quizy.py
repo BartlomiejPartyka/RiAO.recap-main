@@ -4,7 +4,7 @@ import sys
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(parent_dir, 'DataManager.py'))
-from DataManager import data_manager
+from src.DataManager import data_manager
 
 
 class Quizy:
@@ -19,6 +19,12 @@ class Quizy:
         self.select_list = []
         self.data_manager = data_manager()
         self.q_ids = []
+
+        if 'results' not in st.session_state:
+            st.session_state['results'] = []
+
+        if 'latest_result_index' not in st.session_state:
+            st.session_state['latest_result_index'] = None
 
     def new_questions(self):
         self.correct_answers = []
@@ -176,6 +182,15 @@ class Quizy:
         if score == len(self.cont):
             st.balloons()
         self.data_manager.write_attempt(self.q_ids, marks)
+
+        st.session_state['results'].append({
+            'score': score,
+            'total': len(self.cont),
+            'correct_answers': self.correct_answers,
+            'answers': self.answers,
+        })
+
+        st.session_state['latest_result_index'] = len(st.session_state['results']) - 1
 
 
 quizy = Quizy()
