@@ -8,10 +8,19 @@ from src.DataManager import data_manager
 
 class Results:
     def __init__(self):
+        """
+        Initialize the Results class.
+        Create an instance of the data manager to handle database operations.
+        Create an empty Streamlit placeholder for results.
+        """
         self.db_manager = data_manager()
         self.results_placeholder = st.empty()
 
     def print_summary(self):
+        """
+        This method print the summary of results for both parts of the material.
+        Fetch results from the database, calculate percentages, and display the results.
+        """
         self.db_manager.init_connection()
 
         st.title("Wyniki")
@@ -63,6 +72,7 @@ class Results:
             st.write("Brak wyników w bazie danych.")
 
     def display_session_results(self):
+        """This method display the results from the current session stored in Streamlit's session state."""
         if 'results' in st.session_state and st.session_state['results']:
             st.subheader("Wyniki z bieżącej sesji")
             for i, result in enumerate(st.session_state['results']):
@@ -72,10 +82,12 @@ class Results:
             st.write("Brak wyników w bieżącej sesji.")
 
     def calculate_percentage(self, df):
+        """This method calculate the percentage score for each result row."""
         df['Percentage'] = (df[['Result1', 'Result2', 'Result3', 'Result4', 'Result5']].sum(axis=1) / 5) * 100
         return df
 
     def get_top_scores(self, results_df, n=10):
+        """This method get the top n scores from the results DataFrame."""
         if not results_df.empty:
             top_scores_df = results_df.sort_values(by='Percentage', ascending=False).head(n)
             top_scores_df.reset_index(drop=True, inplace=True)
@@ -84,6 +96,7 @@ class Results:
             return pd.DataFrame()
 
     def print_histogram1(self):
+        """Print a histogram of the results from the first part of the material."""
         results_df = self.db_manager.show_results(1)
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
@@ -106,6 +119,7 @@ class Results:
             st.write("Brak wyników do wyświetlenia.")
 
     def print_histogram2(self):
+        """Print a histogram of the results from the second part of the material."""
         results_df = self.db_manager.show_results(2)
         if not results_df.empty:
             results_df = self.calculate_percentage(results_df)
