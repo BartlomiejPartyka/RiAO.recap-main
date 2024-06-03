@@ -3,7 +3,9 @@ import pandas as pd
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
-from src.DataManager import data_manager
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(parent_dir, 'DataManager.py'))
+from DataManager import data_manager
 
 
 class Results:
