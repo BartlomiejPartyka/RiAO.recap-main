@@ -62,7 +62,7 @@ class data_manager:
     def show_results(_self, part):
         """Returns a dataframe with results"""
         with _self.conn.cursor() as cur:
-            cur.execute(f"SELECT * FROM riaoAttempts{part}")
+            cur.execute(f"SELECT * FROM riaoAttempts{part} ORDER BY AttemptID ASC")
             columns = [column[0] for column in cur.description]
             data = cur.fetchall()
             df = pd.DataFrame.from_records(data, columns=columns)
